@@ -15,18 +15,12 @@
 package com.nttdata.bootcamp.product.model.dao;
 
 import com.nttdata.bootcamp.product.model.document.ProductType;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-import reactor.core.publisher.Mono;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-/**
- * Clase de interface dao para obtener los datos de la base de datos.
- */
-public interface ProductTypeDao extends ReactiveMongoRepository<ProductType, String> {
+import java.util.Optional;
 
-    /**
-     * Método que obtiene los datos del document ProductType
-     * @return Mono retorna el ProductType, tipo Mono
-     */
-    Mono<ProductType> findByCode(String code);
+public interface ProductTypeDao extends MongoRepository<ProductType, String> {
+
+    Optional<ProductType> findByCode(String code);
 
 }

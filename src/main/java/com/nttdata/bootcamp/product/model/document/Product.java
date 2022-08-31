@@ -14,8 +14,7 @@
 
 package com.nttdata.bootcamp.product.model.document;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -23,6 +22,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * Clase de tipo document para obtener o establecer los datos de cada atributo.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @ToString
 @Document(collection="product")
 public class Product {
