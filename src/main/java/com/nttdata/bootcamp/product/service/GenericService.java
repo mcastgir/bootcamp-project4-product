@@ -14,8 +14,8 @@
 
 package com.nttdata.bootcamp.product.service;
 
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 
 import java.io.Serializable;
 
@@ -28,36 +28,36 @@ public interface GenericService <T, Id extends Serializable> {
      * Método que realiza la acción insertar datos del document
      * @return Mono retorna el T, tipo Mono
      */
-    Mono<T> insert(T t);
+    Single<T> insert(T t);
 
     /**
      * Método que realiza la acción actualizar datos del document
      * @return Mono retorna el T, tipo Mono
      */
-    Mono<T> update(T t);
+    Single<T> update(T t);
 
     /**
      * Método que realiza la acción borrar datos del document
      * @return Mono retorna el Void, tipo Mono
      */
-    Mono<Void> delete(Id id);
+    Single<T> delete(Id id);
 
     /**
      * Método que realiza la acción buscar datos por id del document
      * @return Mono retorna el T, tipo String
      */
-    Mono<T> find(Id id);
+    Single<T> find(Id id);
 
     /**
      * Método que realiza la acción buscar datos por código del document
      * @return Mono retorna el T, tipo String
      */
-    Mono<T> findByCode(String code);
+    Single<T> findByCode(String code);
 
     /**
      * Método que realiza la acción buscar todos los datos del document
      * @return Mono retorna el T, tipo String
      */
-    Flux<T> findAll();
+    Observable<T> findAll();
 
 }

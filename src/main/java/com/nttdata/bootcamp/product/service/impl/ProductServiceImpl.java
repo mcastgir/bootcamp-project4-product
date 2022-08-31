@@ -17,12 +17,15 @@ package com.nttdata.bootcamp.product.service.impl;
 import com.nttdata.bootcamp.product.model.dao.ProductDao;
 import com.nttdata.bootcamp.product.model.document.Product;
 import com.nttdata.bootcamp.product.service.ProductService;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Clase para los métodos de la implementación de servicio del producto.
@@ -30,85 +33,60 @@ import reactor.core.publisher.Mono;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    /** Declaración de la variable de log */
     private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 
-    /** Declaración de la clase dao */
     @Autowired
     private ProductDao productDao;
 
-    /**
-     * Método que realiza la acción insertar datos del document
-     * @return Mono retorna el Product, tipo Mono
-     */
     @Override
-    public Mono<Product> insert(Product product) {
-        return productDao.save(product)
-                .doFirst(() -> log.info("Begin Insert Product"))
-                .doOnNext(p -> log.info(p.toString()))
-                .doAfterTerminate(() -> log.info("Finish Insert Product"));
+    public Single<Product> insert(Product product) {
+        return Single.just(productDao.insert(product));
     }
 
-    /**
-     * Método que realiza la acción actualizar datos del document
-     * @return Mono retorna el Client, tipo Mono
-     */
     @Override
-    public Mono<Product> update(Product product) {
-        return productDao.findById(product.getId())
-                .doFirst(() -> log.info("Begin Update Product"))
-                .map(p -> product)
-                .flatMap(this.productDao::save)
-                .doOnNext(p -> log.info(p.toString()))
-                .doAfterTerminate(() -> log.info("Finish Update Product"));
+    public Single<Product> update(Product product) {
+        Optional<Product> finded = productDao.findById(product.getId());
+        if (finded.isPresent()) {
+            return Single.just(productDao.save(product));
+        } else {
+            return Single.error(new RuntimeException("No existe producto"));
+        }
     }
 
-    /**
-     * Método que realiza la acción borrar datos del document
-     * @return Mono retorna el Void, tipo Mono
-     */
     @Override
-    public Mono<Void> delete(String id) {
-        return productDao.deleteById(id)
-                .doFirst(() -> log.info("Begin Delete Product"))
-                .doOnNext(p -> log.info(p.toString()))
-                .doAfterTerminate(() -> log.info("Finish Delete Product"));
+    public Single<Product> delete(String id) {
+        Optional<Product> finded = productDao.findById(id);
+        if (finded.isPresent()) {
+            productDao.deleteById(id);
+            return Single.just(finded.get());
+        } else {
+            return Single.error(new RuntimeException("No existe producto"));
+        }
     }
 
-    /**
-     * Método que realiza la acción buscar datos por id del document
-     * @return Mono retorna el Product, tipo String
-     */
     @Override
-    public Mono<Product> find(String id) {
-        return productDao.findById(id)
-                .doFirst(() -> log.info("Begin Find Product"))
-                .doOnNext(p -> log.info(p.toString()))
-                .doAfterTerminate(() -> log.info("Finish Find Product"));
+    public Single<Product> find(String id) {
+        Optional<Product> finded = productDao.findById(id);
+        if (finded.isPresent()) {
+            return Single.just(finded.get());
+        } else {
+            return Single.error(new RuntimeException("No existe producto"));
+        }
     }
 
-    /**
-     * Método que realiza la acción buscar datos por código del document
-     * @return Mono retorna el Client, tipo String
-     */
     @Override
-    public Mono<Product> findByCode(String code) {
-        return productDao.findByCode(code)
-                .doFirst(() -> log.info("Begin FindByCode Product"))
-                .doOnNext(p -> log.info(p.toString()))
-                .doAfterTerminate(() -> log.info("Finish FindByCode Product"));
+    public Single<Product> findByCode(String code) {
+        Optional<Product> finded = productDao.findByCode(code);
+        if (finded.isPresent()) {
+            return Single.just(finded.get());
+        } else {
+            return Single.error(new RuntimeException("No existe producto"));
+        }
     }
 
-    /**
-     * Método que realiza la acción buscar todos los datos del document
-     * @return Mono retorna el Product, tipo String
-     */
     @Override
-    public Flux<Product> findAll() {
-        return productDao.findAll()
-                .doFirst(() -> log.info("Begin FindAll Product"))
-                .doOnNext(p -> log.info(p.toString()))
-                .doAfterTerminate(() -> log.info("Finish FindAll Product"));
+    public Observable<Product> findAll() {
+        return Observable.fromIterable(productDao.findAll());
     }
 
 }
